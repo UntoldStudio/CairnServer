@@ -3,6 +3,7 @@
   "package": "org.cairnserver.mixin",
   "compatibilityLevel": "JAVA_25",
   "mixins": [
-    "server.MainMixin"
+    "server.MainMixin",
+    "server.MinecraftServerMixin"
   ]
 }

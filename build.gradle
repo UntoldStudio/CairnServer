@@ -46,14 +46,12 @@ sourceSets {
     }
 }
 
-configurations {
-    embed
-    compileOnly.extendsFrom embed
-}
-
 dependencies {
-    embed 'com.github.UntoldStudio:Mixin:0.2.0'
-    embed 'com.google.code.gson:gson:2.13.2'
+    compileOnly files('lib/server-26.1.jar')
+    compileOnly files('lib/server-bootstrap-26.1.jar')
+
+    implementation 'com.github.UntoldStudio:Mixin:0.2.0'
+    implementation 'com.google.code.gson:gson:2.13.2'
 
     compileOnly 'org.slf4j:slf4j-api:2.0.17'
     compileOnly 'org.apache.logging.log4j:log4j-api:2.25.2'
@@ -127,7 +125,7 @@ tasks.register('cairnShadowJar', ShadowJar) {
 
     from sourceSets.main.output
 
-    configurations = [project.configurations.embed]
+    configurations = [project.configurations.runtimeClasspath]
 
     manifest {
         attributes(

@@ -3,6 +3,7 @@ package org.cairnserver.main;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.cairnserver.plugin.PluginManager;
 import org.spongepowered.asm.launch.MixinBootstrap;
 import org.spongepowered.asm.launch.platform.CommandLineOptions;
 import org.spongepowered.asm.mixin.MixinEnvironment;
@@ -34,7 +35,7 @@ import java.util.jar.JarFile;
 public class Main {
     private static final String VERSION = "26.1";
     private static final String SERVER_JAR_PARENT_PATH = "lib";
-    private static final String SEVER_JAR_NAME = "server.jar";
+    private static final String SERVER_JAR_NAME = "server.jar";
     private static final String TEMP_JAR_NAME = "server.jar.tmp";
     private static final int NETWORK_RETRIES_COUNT = 5;
     private static Path serverJarPath;
@@ -49,7 +50,7 @@ public class Main {
         } catch (IOException e) {
             System.err.println("尝试创建lib目录时发生IO异常:" + e.getMessage());
         }
-        serverJarPath = libPath.resolve(SEVER_JAR_NAME);
+        serverJarPath = libPath.resolve(SERVER_JAR_NAME);
         tempJarPath = libPath.resolve(TEMP_JAR_NAME);
         if (Files.notExists(serverJarPath)) {
             System.out.println("正在下载server.jar...");
@@ -62,7 +63,7 @@ public class Main {
                         Files.deleteIfExists(tempJarPath);
                     } catch (IOException ignored) {}
                     if (i == NETWORK_RETRIES_COUNT - 1) {
-                        System.out.println("请求Minecraft服务API时发生错误,请尝试手动下载" + SEVER_JAR_NAME + "并移动到本服务器JAR根目录下的lib/server.jar,错误:" + e.getMessage());
+                        System.out.println("请求Minecraft服务API时发生错误,请尝试手动下载" + SERVER_JAR_NAME + "并移动到本服务器JAR根目录下的lib/server.jar,错误:" + e.getMessage());
                         return;
                     }
                     System.out.println("下载失败,重试中(" + (i + 1) + "/" + NETWORK_RETRIES_COUNT + "):" + e.getMessage());
@@ -85,13 +86,19 @@ public class Main {
         MixinBootstrap.init();
         MixinEnvironment.init(MixinEnvironment.Phase.DEFAULT);
         Mixins.addConfiguration("mixins.cairnserver.json");
-        MixinEnvironment.gotoPhase(MixinEnvironment.Phase.DEFAULT);
-        MixinBootstrap.getPlatform().prepare(CommandLineOptions.defaultArgs());
 
         MixinTransformer transformer = new MixinTransformer();
         URL[] urls = extractedJars.toArray(new URL[0]);
         ClassLoader parent = Main.class.getClassLoader().getParent();
-        ClassLoader classLoader = new CairnClassLoader(urls, parent, transformer);
+        CairnClassLoader classLoader = new CairnClassLoader(urls, parent, transformer);
+
+        PluginManager.registerAllPluginMixinConfigs();
+
+        PluginManager.init(Path.of("plugins"), classLoader);
+
+        MixinEnvironment.gotoPhase(MixinEnvironment.Phase.DEFAULT);
+        MixinBootstrap.getPlatform().prepare(CommandLineOptions.defaultArgs());
+
         String mainClassName;
         try (JarFile jar = new JarFile(serverJarPath.toFile())) {
             JarEntry entry = jar.getJarEntry("META-INF/main-class");
@@ -191,7 +198,7 @@ public class Main {
 
             Files.move(tempJarPath, serverJarPath, StandardCopyOption.ATOMIC_MOVE);
 
-            System.out.println("下载" + SEVER_JAR_NAME + "成功!");
+            System.out.println("下载" + SERVER_JAR_NAME + "成功!");
         }
     }
 }
