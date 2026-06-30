@@ -1,0 +1,271 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
+plugins {
+    id 'java'
+    id 'eclipse'
+    id 'idea'
+    id 'maven-publish'
+    id 'com.gradleup.shadow' version '9.4.3'
+}
+
+defaultTasks 'check', 'build'
+
+group = 'com.github.UntoldStudio'
+version = project.findProperty('buildVersion')
+
+base {
+    archivesName = 'CairnServer'
+}
+
+ext {
+    projectName = 'CairnServer'
+    inceptionYear = '2026'
+    packaging = 'jar'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+    maven { url 'https://libraries.minecraft.net/' }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+        }
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
+}
+
+configurations {
+    embed
+    compileOnly.extendsFrom embed
+}
+
+dependencies {
+    embed 'com.github.UntoldStudio:Mixin:0.2.0'
+    embed 'com.google.code.gson:gson:2.13.2'
+
+    compileOnly 'org.slf4j:slf4j-api:2.0.17'
+    compileOnly 'org.apache.logging.log4j:log4j-api:2.25.2'
+    compileOnly 'com.google.guava:guava:33.5.0-jre'
+    compileOnly 'com.google.guava:failureaccess:1.0.3'
+    compileOnly 'it.unimi.dsi:fastutil:8.5.18'
+    compileOnly 'commons-io:commons-io:2.20.0'
+    compileOnly 'commons-codec:commons-codec:1.19.0'
+    compileOnly 'org.apache.commons:commons-lang3:3.19.0'
+    compileOnly 'org.apache.commons:commons-compress:1.28.0'
+    compileOnly 'io.netty:netty-buffer:4.2.7.Final'
+    compileOnly 'io.netty:netty-codec-base:4.2.7.Final'
+    compileOnly 'io.netty:netty-codec-compression:4.2.7.Final'
+    compileOnly 'io.netty:netty-codec-http:4.2.7.Final'
+    compileOnly 'io.netty:netty-common:4.2.7.Final'
+    compileOnly 'io.netty:netty-handler:4.2.7.Final'
+    compileOnly 'io.netty:netty-resolver:4.2.7.Final'
+    compileOnly 'io.netty:netty-transport:4.2.7.Final'
+    compileOnly 'io.netty:netty-transport-classes-epoll:4.2.7.Final'
+    compileOnly 'io.netty:netty-transport-classes-kqueue:4.2.7.Final'
+    compileOnly 'com.mojang:datafixerupper:9.0.19'
+    compileOnly 'com.mojang:brigadier:1.3.10'
+    compileOnly 'com.mojang:authlib:7.0.63'
+    compileOnly 'com.mojang:blocklist:1.0.10'
+    compileOnly 'com.mojang:patchy:2.2.10'
+    compileOnly 'com.mojang:logging:1.6.11'
+    compileOnly 'com.mojang:text2speech:1.18.11'
+    compileOnly 'com.mojang:jtracy:1.0.37'
+    compileOnly 'net.sf.jopt-simple:jopt-simple:5.0.4'
+    compileOnly 'org.joml:joml:1.10.8'
+    compileOnly 'org.jcraft:jorbis:0.0.17'
+    compileOnly 'com.github.oshi:oshi-core:6.9.0'
+    compileOnly 'com.ibm.icu:icu4j:77.1'
+    compileOnly 'com.microsoft.azure:msal4j:1.23.1'
+    compileOnly 'com.azure:azure-json:1.4.0'
+    compileOnly 'org.lwjgl:lwjgl:3.4.1'
+    compileOnly 'org.lwjgl:lwjgl-freetype:3.4.1'
+    compileOnly 'org.lwjgl:lwjgl-glfw:3.4.1'
+    compileOnly 'org.lwjgl:lwjgl-jemalloc:3.4.1'
+    compileOnly 'org.lwjgl:lwjgl-openal:3.4.1'
+    compileOnly 'org.lwjgl:lwjgl-opengl:3.4.1'
+    compileOnly 'org.lwjgl:lwjgl-stb:3.4.1'
+    compileOnly 'org.lwjgl:lwjgl-tinyfd:3.4.1'
+    compileOnly 'org.jspecify:jspecify:1.0.0'
+    compileOnly 'at.yawk.lz4:lz4-java:1.10.1'
+    compileOnly 'ca.weblite:java-objc-bridge:1.1'
+    compileOnly 'net.java.dev.jna:jna:5.17.0'
+    compileOnly 'net.java.dev.jna:jna-platform:5.17.0'
+}
+
+processResources {
+    from 'LICENSE.txt'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 25
+}
+
+tasks.named('jar') {
+    enabled = false
+}
+
+tasks.named('shadowJar') {
+    enabled = false
+}
+
+tasks.register('cairnShadowJar', ShadowJar) {
+    archiveClassifier = ''
+    archiveFileName = 'CairnServer.jar'
+
+    from sourceSets.main.output
+
+    configurations = [project.configurations.embed]
+
+    manifest {
+        attributes(
+                'Main-Class': 'org.cairnserver.Main',
+                'Built-By': System.properties['user.name'],
+                'Created-By': System.properties['java.vm.version'] + " (" + System.properties['java.vm.vendor'] + ")",
+                'Implementation-Title': project.name,
+                'Implementation-Version': project.version,
+                'Implementation-Vendor': 'UntoldStudio'
+        )
+    }
+
+    mergeServiceFiles()
+    relocate 'com.google', 'org.cairnserver.include.com.google'
+}
+
+build.dependsOn cairnShadowJar
+
+artifacts {
+    archives cairnShadowJar
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = 'CairnServer'
+            artifact cairnShadowJar
+            pom {
+                name = 'CairnServer'
+                description = 'A modern Minecraft server launcher with Mixin support for Java 25+'
+                url = 'https://github.com/UntoldStudio/CairnServer'
+                licenses {
+                    license {
+                        name = 'GNU Lesser General Public License v3.0'
+                        url = 'https://www.gnu.org/licenses/lgpl-3.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'UntoldStudio'
+                        name = 'UntoldStudio Team'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/UntoldStudio/CairnServer.git'
+                    developerConnection = 'scm:git:ssh://github.com/UntoldStudio/CairnServer.git'
+                    url = 'https://github.com/UntoldStudio/CairnServer'
+                }
+            }
+        }
+    }
+}
+
+tasks.register('pushChanges') {
+    description = '自动add、commit并推送当前分支'
+    doLast {
+        def status = new ProcessBuilder('git', 'status', '--porcelain')
+                .directory(rootProject.projectDir)
+                .redirectErrorStream(true)
+                .start().text.trim()
+        if (status.isEmpty()) {
+            println '工作区没有需要提交的更改, 直接推送'
+        } else {
+            println '当前更改的文件:'
+            println status
+            println '请输入提交信息: '
+            def reader = new BufferedReader(new InputStreamReader(System.in))
+            def message = reader.readLine()
+            if (message == null || message.trim().isEmpty()) {
+                throw new GradleException('提交信息不能为空')
+            }
+            def add = new ProcessBuilder('git', 'add', '.')
+                    .directory(rootProject.projectDir)
+                    .start()
+            add.waitFor()
+            def commit = new ProcessBuilder('git', 'commit', '-m', message)
+                    .directory(rootProject.projectDir)
+                    .start()
+            commit.waitFor()
+        }
+        def push = new ProcessBuilder('git', 'push', 'origin', 'HEAD')
+                .directory(rootProject.projectDir)
+                .start()
+        push.waitFor()
+        println '>>> 推送完成'
+    }
+}
+
+tasks.register('releaseVersion') {
+    description = '自动add、commit、push并创建发布标签'
+    doLast {
+        def tagName = project.version.toString()
+        if (tagName == null || tagName.isEmpty() || tagName.contains('unspecified')) {
+            throw new GradleException("版本号无效: '${tagName}', 请设置gradle.properties中的buildVersion")
+        }
+        def status = new ProcessBuilder('git', 'status', '--porcelain')
+                .directory(rootProject.projectDir)
+                .redirectErrorStream(true)
+                .start().text.trim()
+        if (status.isEmpty()) {
+            println '工作区没有需要提交的更改, 直接推送'
+        } else {
+            println '当前更改的文件:'
+            println status
+            println '请输入提交信息: '
+            def reader = new BufferedReader(new InputStreamReader(System.in))
+            def message = reader.readLine()
+            if (message == null || message.trim().isEmpty()) {
+                throw new GradleException('提交信息不能为空')
+            }
+            def add = new ProcessBuilder('git', 'add', '.')
+                    .directory(rootProject.projectDir)
+                    .start()
+            add.waitFor()
+            def commit = new ProcessBuilder('git', 'commit', '-m', message)
+                    .directory(rootProject.projectDir)
+                    .start()
+            commit.waitFor()
+        }
+        def push = new ProcessBuilder('git', 'push', 'origin', 'HEAD')
+                .directory(rootProject.projectDir)
+                .start()
+        push.waitFor()
+        def remoteTags = new ProcessBuilder('git', 'ls-remote', '--tags', 'origin')
+                .directory(rootProject.projectDir)
+                .redirectErrorStream(true)
+                .start().text.trim()
+        if (remoteTags.contains("refs/tags/${tagName}")) {
+            throw new GradleException("远程仓库已存在标签'${tagName}', 请更新buildVersion后再试")
+        }
+        def tag = new ProcessBuilder('git', 'tag', '-a', tagName, '-m', "Release ${tagName}")
+                .directory(rootProject.projectDir)
+                .start()
+        tag.waitFor()
+        def pushTag = new ProcessBuilder('git', 'push', 'origin', tagName)
+                .directory(rootProject.projectDir)
+                .start()
+        pushTag.waitFor()
+        println ">>> 发布完成! 标签${tagName}已推送, JitPack将开始构建"
+    }
+}
