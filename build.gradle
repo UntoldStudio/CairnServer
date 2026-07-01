@@ -3,6 +3,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 plugins {
     id 'java'
     id 'eclipse'
+    id 'application'
     id 'idea'
     id 'maven-publish'
     id 'com.gradleup.shadow' version '9.4.3'
@@ -53,15 +54,24 @@ dependencies {
     implementation 'com.github.UntoldStudio:Mixin:0.2.0'
     implementation 'com.google.code.gson:gson:2.13.2'
 
-    compileOnly 'org.slf4j:slf4j-api:2.0.17'
-    compileOnly 'org.apache.logging.log4j:log4j-api:2.25.2'
-    compileOnly 'com.google.guava:guava:33.5.0-jre'
+    compileOnly 'at.yawk.lz4:lz4-java:1.10.1'
+    compileOnly 'ca.weblite:java-objc-bridge:1.1'
+    compileOnly 'com.azure:azure-json:1.4.0'
+    compileOnly 'com.github.oshi:oshi-core:6.9.0'
     compileOnly 'com.google.guava:failureaccess:1.0.3'
-    compileOnly 'it.unimi.dsi:fastutil:8.5.18'
-    compileOnly 'commons-io:commons-io:2.20.0'
+    compileOnly 'com.google.guava:guava:33.5.0-jre'
+    compileOnly 'com.ibm.icu:icu4j:77.1'
+    compileOnly 'com.microsoft.azure:msal4j:1.23.1'
+    compileOnly 'com.mojang:authlib:7.0.63'
+    compileOnly 'com.mojang:blocklist:1.0.10'
+    compileOnly 'com.mojang:brigadier:1.3.10'
+    compileOnly 'com.mojang:datafixerupper:9.0.19'
+    compileOnly 'com.mojang:jtracy:1.0.37'
+    compileOnly 'com.mojang:logging:1.6.11'
+    compileOnly 'com.mojang:patchy:2.2.10'
+    compileOnly 'com.mojang:text2speech:1.18.11'
     compileOnly 'commons-codec:commons-codec:1.19.0'
-    compileOnly 'org.apache.commons:commons-lang3:3.19.0'
-    compileOnly 'org.apache.commons:commons-compress:1.28.0'
+    compileOnly 'commons-io:commons-io:2.20.0'
     compileOnly 'io.netty:netty-buffer:4.2.7.Final'
     compileOnly 'io.netty:netty-codec-base:4.2.7.Final'
     compileOnly 'io.netty:netty-codec-compression:4.2.7.Final'
@@ -72,21 +82,22 @@ dependencies {
     compileOnly 'io.netty:netty-transport:4.2.7.Final'
     compileOnly 'io.netty:netty-transport-classes-epoll:4.2.7.Final'
     compileOnly 'io.netty:netty-transport-classes-kqueue:4.2.7.Final'
-    compileOnly 'com.mojang:datafixerupper:9.0.19'
-    compileOnly 'com.mojang:brigadier:1.3.10'
-    compileOnly 'com.mojang:authlib:7.0.63'
-    compileOnly 'com.mojang:blocklist:1.0.10'
-    compileOnly 'com.mojang:patchy:2.2.10'
-    compileOnly 'com.mojang:logging:1.6.11'
-    compileOnly 'com.mojang:text2speech:1.18.11'
-    compileOnly 'com.mojang:jtracy:1.0.37'
+    compileOnly 'io.netty:netty-transport-native-epoll:4.2.7.Final'
+    compileOnly 'io.netty:netty-transport-native-kqueue:4.2.7.Final'
+    compileOnly 'io.netty:netty-transport-native-unix-common:4.2.7.Final'
+    compileOnly 'it.unimi.dsi:fastutil:8.5.18'
+    compileOnly 'net.java.dev.jna:jna:5.17.0'
+    compileOnly 'net.java.dev.jna:jna-platform:5.17.0'
     compileOnly 'net.sf.jopt-simple:jopt-simple:5.0.4'
-    compileOnly 'org.joml:joml:1.10.8'
+    compileOnly 'org.apache.commons:commons-compress:1.28.0'
+    compileOnly 'org.apache.commons:commons-lang3:3.19.0'
+    compileOnly 'org.apache.logging.log4j:log4j-api:2.25.2'
+    compileOnly 'org.apache.logging.log4j:log4j-core:2.25.2'
+    annotationProcessor 'org.apache.logging.log4j:log4j-core:2.25.2'
+    compileOnly 'org.apache.logging.log4j:log4j-slf4j2-impl:2.25.2'
     compileOnly 'org.jcraft:jorbis:0.0.17'
-    compileOnly 'com.github.oshi:oshi-core:6.9.0'
-    compileOnly 'com.ibm.icu:icu4j:77.1'
-    compileOnly 'com.microsoft.azure:msal4j:1.23.1'
-    compileOnly 'com.azure:azure-json:1.4.0'
+    compileOnly 'org.joml:joml:1.10.8'
+    compileOnly 'org.jspecify:jspecify:1.0.0'
     compileOnly 'org.lwjgl:lwjgl:3.4.1'
     compileOnly 'org.lwjgl:lwjgl-freetype:3.4.1'
     compileOnly 'org.lwjgl:lwjgl-glfw:3.4.1'
@@ -95,11 +106,7 @@ dependencies {
     compileOnly 'org.lwjgl:lwjgl-opengl:3.4.1'
     compileOnly 'org.lwjgl:lwjgl-stb:3.4.1'
     compileOnly 'org.lwjgl:lwjgl-tinyfd:3.4.1'
-    compileOnly 'org.jspecify:jspecify:1.0.0'
-    compileOnly 'at.yawk.lz4:lz4-java:1.10.1'
-    compileOnly 'ca.weblite:java-objc-bridge:1.1'
-    compileOnly 'net.java.dev.jna:jna:5.17.0'
-    compileOnly 'net.java.dev.jna:jna-platform:5.17.0'
+    compileOnly 'org.slf4j:slf4j-api:2.0.17'
 }
 
 processResources {
@@ -180,6 +187,7 @@ publishing {
 }
 
 tasks.register('pushChanges') {
+    group = 'cairn'
     description = '自动add、commit并推送当前分支'
     doLast {
         def status = new ProcessBuilder('git', 'status', '--porcelain')
@@ -215,6 +223,7 @@ tasks.register('pushChanges') {
 }
 
 tasks.register('releaseVersion') {
+    group = 'cairn'
     description = '自动add、commit、push并创建发布标签'
     doLast {
         def tagName = project.version.toString()
@@ -266,4 +275,17 @@ tasks.register('releaseVersion') {
         pushTag.waitFor()
         println ">>> 发布完成! 标签${tagName}已推送, JitPack将开始构建"
     }
+}
+
+application {
+    mainClass = 'org.cairnserver.main.Main'
+}
+
+tasks.register('runServer', JavaExec) {
+    group = 'cairn'
+    description = '运行服务器'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'org.cairnserver.main.Main'
+    workingDir = file('run')
+    //args 'nogui'
 }

@@ -88,13 +88,13 @@ public class Main {
         Mixins.addConfiguration("mixins.cairnserver.json");
 
         MixinTransformer transformer = new MixinTransformer();
-        URL[] urls = extractedJars.toArray(new URL[0]);
+        URL selfUrl = Main.class.getProtectionDomain().getCodeSource().getLocation();
+        List<URL> allUrls = new ArrayList<>(extractedJars);
+        allUrls.add(selfUrl);
+        URL[] urls = allUrls.toArray(new URL[0]);
         ClassLoader parent = Main.class.getClassLoader().getParent();
+
         CairnClassLoader classLoader = new CairnClassLoader(urls, parent, transformer);
-
-        PluginManager.registerAllPluginMixinConfigs();
-
-        PluginManager.init(Path.of("plugins"), classLoader);
 
         MixinEnvironment.gotoPhase(MixinEnvironment.Phase.DEFAULT);
         MixinBootstrap.getPlatform().prepare(CommandLineOptions.defaultArgs());
@@ -121,10 +121,12 @@ public class Main {
             }
         }, "ServerMain");
         serverThread.setContextClassLoader(classLoader);
+        PluginManager.init(Path.of("plugins"), classLoader);
+        PluginManager.registerAllPluginMixinConfigs();
         serverThread.start();
     }
 
-    private static List<URL> extractDir(java.util.jar.JarFile jar, String prefix, Path outputDir) throws IOException {
+    private static List<URL> extractDir(JarFile jar, String prefix, Path outputDir) throws IOException {
         List<URL> urls = new ArrayList<>();
         Files.createDirectories(outputDir);
         jar.stream()

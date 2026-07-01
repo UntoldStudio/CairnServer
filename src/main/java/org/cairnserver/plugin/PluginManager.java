@@ -3,6 +3,7 @@ package org.cairnserver.plugin;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.cairnserver.main.CairnClassLoader;
+import org.cairnserver.util.Logger;
 import org.spongepowered.asm.mixin.Mixins;
 
 import java.io.IOException;
@@ -37,7 +38,7 @@ public class PluginManager {
                 }
             }
         } catch (IOException e) {
-            System.err.println("扫描插件 Mixin 配置失败: " + e.getMessage());
+            System.out.println("扫描插件Mixin配置失败:" + e.getMessage());
         }
     }
 
@@ -48,11 +49,11 @@ public class PluginManager {
                 try {
                     loadPlugin(jar);
                 } catch (Exception e) {
-                    System.err.println("启用插件失败 " + jar.getFileName() + ": " + e.getMessage());
+                    Logger.warn("启用插件{}失败:{}", jar.getFileName(), e.getMessage());
                 }
             }
         } catch (IOException e) {
-            System.err.println("扫描plugins目录失败: " + e.getMessage());
+            Logger.error("扫描plugins目录失败:{}", e.getMessage());
         }
     }
 
@@ -67,19 +68,24 @@ public class PluginManager {
 
         if (instance instanceof CairnPlugin plugin) {
             plugin.onEnable();
+            plugin.setEnabled(true);
             loadedPlugins.add(plugin);
-            System.out.println("已启用插件: " + plugin.getName());
+            Logger.info("已启用插件:{}", plugin.getName());
         } else {
-            throw new RuntimeException("插件主类必须实现 CairnPlugin 接口");
+            throw new RuntimeException("插件主类必须实现CairnPlugin抽象类");
         }
     }
 
     public static void disableAllPlugins() {
         for (CairnPlugin plugin : loadedPlugins) {
+            if (!plugin.isEnabled()) {
+                continue;
+            }
             try {
                 plugin.onDisable();
+                plugin.setEnabled(false);
             } catch (Exception e) {
-                System.err.println("禁用插件失败 " + plugin.getName() + ": " + e.getMessage());
+                Logger.warn("禁用插件{}失败:{}", plugin.getName(), e.getMessage());
             }
         }
         loadedPlugins.clear();
@@ -88,7 +94,7 @@ public class PluginManager {
     private static JsonObject readPluginConfig(Path jar) throws IOException {
         try (JarFile jf = new JarFile(jar.toFile())) {
             JarEntry entry = jf.getJarEntry("cairn-plugin.json");
-            if (entry == null) throw new RuntimeException("缺少 cairn-plugin.json");
+            if (entry == null) throw new RuntimeException("缺少cairn-plugin.json");
             try (InputStream in = jf.getInputStream(entry)) {
                 String json = new String(in.readAllBytes(), StandardCharsets.UTF_8);
                 return JsonParser.parseString(json).getAsJsonObject();
