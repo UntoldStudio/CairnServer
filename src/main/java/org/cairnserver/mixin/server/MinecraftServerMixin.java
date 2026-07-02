@@ -1,6 +1,9 @@
 package org.cairnserver.mixin.server;
 
 import net.minecraft.server.MinecraftServer;
+import org.cairnserver.event.EventBus;
+import org.cairnserver.event.events.server.ServerStartedEvent;
+import org.cairnserver.event.events.server.ServerStopingEvent;
 import org.cairnserver.plugin.PluginManager;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,11 +22,14 @@ public class MinecraftServerMixin {
         if (!cairn$pluginsLoaded) {
             cairn$pluginsLoaded = true;
             PluginManager.enableAllPlugins();
+
+            EventBus.post(new ServerStartedEvent());
         }
     }
 
     @Inject(method = "stopServer", at = @At("HEAD"))
     private void onServerStop(CallbackInfo callbackInfo) {
+        EventBus.post(new ServerStopingEvent());
         PluginManager.disableAllPlugins();
     }
 }

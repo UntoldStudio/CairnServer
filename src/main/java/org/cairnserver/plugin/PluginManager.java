@@ -2,6 +2,7 @@ package org.cairnserver.plugin;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.cairnserver.event.EventBus;
 import org.cairnserver.main.CairnClassLoader;
 import org.cairnserver.util.Logger;
 import org.spongepowered.asm.mixin.Mixins;
@@ -26,6 +27,7 @@ public class PluginManager {
     public static void init(Path newPluginsDir, CairnClassLoader newClassLoader){
         pluginsDir = newPluginsDir;
         classLoader = newClassLoader;
+        EventBus.registerStaticListener(PluginManager.class);
     }
 
     public static void registerAllPluginMixinConfigs() {

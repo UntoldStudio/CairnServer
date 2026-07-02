@@ -11,7 +11,7 @@ public class EventBus {
 
     private EventBus(){}
 
-    public static void registerListener(EventListener listener) {
+    public static void registerListener(EventSubscriber listener) {
         for (Method method : listener.getClass().getMethods()) {
             if (!method.isAnnotationPresent(EventHandler.class)) continue;
             Class<?>[] paramTypes = method.getParameterTypes();
@@ -36,7 +36,15 @@ public class EventBus {
     }
 
     public static Event post(Event event) {
-        List<RegisteredHandler> handlers = handlerMap.getOrDefault(event.getClass(), Collections.emptyList());
+        List<RegisteredHandler> handlers = new ArrayList<>();
+        Class<?> clazz = event.getClass();
+        while (clazz != null && Event.class.isAssignableFrom(clazz)) {
+            List<RegisteredHandler> levelHandlers = handlerMap.get(clazz);
+            if (levelHandlers != null) {
+                handlers.addAll(levelHandlers);
+            }
+            clazz = clazz.getSuperclass();
+        }
         for (RegisteredHandler handler : handlers) {
             try {
                 if (handler.isStatic) {
@@ -51,5 +59,5 @@ public class EventBus {
         return event;
     }
 
-    private record RegisteredHandler(EventListener listener, Method method, boolean isStatic) {}
+    private record RegisteredHandler(EventSubscriber listener, Method method, boolean isStatic) {}
 }
