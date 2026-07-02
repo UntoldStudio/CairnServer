@@ -5,14 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="439cc0fc-e7d2-47f4-81f7-1b73478c6ff3" name="更改" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/cairnserver/event/EventSubscriber.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/cairnserver/event/Event.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/cairnserver/event/Event.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/cairnserver/event/EventBus.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/cairnserver/event/EventBus.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/cairnserver/event/EventListener.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/cairnserver/main/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/cairnserver/main/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/cairnserver/mixin/server/MinecraftServerMixin.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/cairnserver/mixin/server/MinecraftServerMixin.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/cairnserver/plugin/PluginManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/cairnserver/plugin/PluginManager.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -87,6 +80,7 @@
     "Gradle.Run.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
@@ -96,9 +90,9 @@
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "D:/Develop/CairnServer/lib",
     "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "模块",
+    "project.structure.last.edited": "项目",
     "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
+    "project.structure.side.proportion": "0.29310346",
     "settings.editor.selected.configurable": "configurable.group.appearance"
   }
 }]]></component>
@@ -107,7 +101,7 @@
       <recent name="D:\Develop\CairnServer\lib" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.Run">
+  <component name="RunManager" selected="Gradle.Push Change">
     <configuration name="Build" type="GradleRunConfiguration" factoryName="Gradle">
       <ExternalSystemSettings>
         <option name="executionName" />
